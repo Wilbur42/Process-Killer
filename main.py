@@ -1,3 +1,4 @@
+from threading import Thread
 import wmi
 import pythoncom
 
@@ -15,4 +16,8 @@ def terminate_all():
 
 if __name__ == '__main__':
 
-    terminate_all()
+    thread_count = 2
+
+    for i in range(thread_count):
+        Thread(target=terminate_all).start()
+        print(f'Started thread {i} successfully.')
