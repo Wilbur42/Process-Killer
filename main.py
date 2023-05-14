@@ -1,26 +1,24 @@
 from threading import Thread
-import os
-import wmi
-import pythoncom
+import psutil
+# import os
 
 def terminate_all():
-    pythoncom.CoInitialize()
-    c = wmi.WMI()
     while True:
-        processList = list(c.Win32_Process())
-        for process in processList:
+        for proc in psutil.process_iter():
             try:
-                if process.name not in ['Discord.exe', 'new.py', 'Code.exe', 'python.exe', 'py.exe', 'cmd.exe', 'conhost.exe', 'bash.exe']:
-                    print(f'Terminating process: {process.name}.')
-                    process.terminate()
-                    os.system(f"taskkill /F /IM {process.name}")
-            except:
-                print(f'Error: {process.name} could not be terminated.')
+                if proc.name() not in ['Discord.exe', 'new.py', 'Code.exe', 'python.exe', 'py.exe', 'cmd.exe', 'conhost.exe', 'bash.exe']:
+                    print(f'Terminating process: {proc.name()}.')
+                    proc.terminate()
+                    # os.system(f"taskkill /F /IM {proc.name()}")
+            except psutil.AccessDenied:
+                print(f'Access denied to process: {proc.name()}.')
+            except psutil.NoSuchProcess:
+                print(f'Process not found: {proc.name()}.')
 
-            # if 'svchost.exe' in process.name:
+            # if 'svchost.exe' in proc.name():
             #     continue # When relaunched, restarts explorer.exe
-            # if 'explorer.exe' in process.name:
-            #     os.system('TASKKILL /IM explorer.exe /F')
+            # if 'explorer.exe' in proc.name():
+            #     os.system('TASKKILL /F /IM explorer.exe')
 
 if __name__ == '__main__':
 
